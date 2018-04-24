@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 
 	"github.com/go-redis/redis"
@@ -12,19 +13,29 @@ var (
 )
 
 func dbInit() {
-	client = redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
-	})
+	opt, err := redis.ParseURL(os.Getenv("REDIS_URL"))
+	if err != nil {
+		panic(err)
+	}
+	client = redis.NewClient(opt)
 }
 
 func dbStatus() {
+	pong, err := client.Ping().Result()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(pong + " - connection established with redis server")
+
 	res, err := client.Info("keyspace").Result()
 	if err != nil {
 		panic(err)
 	}
 	re := regexp.MustCompile(".*keys=(\\d+),.*")
 	match := re.FindStringSubmatch(res)
-	fmt.Println("Database size: " + match[1] + " key(s)")
+	if len(match) > 1 {
+		fmt.Println("Database size: " + match[1] + " key(s)")
+	}
 }
 
 func dbCreate(k, v string) bool {
