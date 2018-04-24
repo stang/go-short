@@ -65,5 +65,9 @@ func main() {
 		}
 	})
 
-	app.Run(iris.Addr(":"+os.Getenv("PORT")), iris.WithoutServerError(iris.ErrServerClosed))
+	listen_port := "8080"
+	if p := os.Getenv("PORT"); p != "" {
+		listen_port = p
+	}
+	app.Run(iris.Addr(":"+listen_port), iris.WithoutServerError(iris.ErrServerClosed))
 }

@@ -13,7 +13,11 @@ var (
 )
 
 func dbInit() {
-	opt, err := redis.ParseURL(os.Getenv("REDIS_URL"))
+	redis_url := "redis://localhost:6379"
+	if x := os.Getenv("REDIS_URL"); x != "" {
+		redis_url = x
+	}
+	opt, err := redis.ParseURL(redis_url)
 	if err != nil {
 		panic(err)
 	}
