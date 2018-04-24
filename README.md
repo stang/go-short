@@ -6,8 +6,8 @@ This project is a simple URL shortner.
 
 ## Pre-requisites
 
-    go get -u github.com/go-redis/redis
-    go get -u github.com/kataras/iris
+    # install dependencies
+    dep ensure
 
 ## Development
 
