@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+        <!-- Font Awesome -->
+        <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>
+
+        <title>Shorty - A simple URL shortner</title>
+    </head>
+    <body>
+        <div>
+            <div class="jumbotron alert-warning">
+                <h1>Disclaimer</h1>
+                <p class="font-italic">
+                    We <b>do not</b> guarantee any service continuity, and shorten URLs can be deleted at any moment, with no prior notice.
+                    <br />
+                    The only purpose of this project is to experiement different technology stacks.
+                </p>
+            </div>
+            <div class="container container-fluid ">
+                <div class="text-center" id="formView">
+                    <form action="/shorten" id="url-shortner-form">
+                      <div class="form-group">
+                        <small id="url-help" class="form-text text-muted">Enter an URL to shorten.</small>
+                        <input type="url" name="uri" class="form-control" id="url-input" aria-describedby="url-help" placeholder="http://..." required>
+                        <div class="invalid-feedback">
+                            Please provide a valid URL.
+                        </div>
+                      </div>
+                      <button type="submit" class="btn btn-primary"><i class="fas fa-cut"></i> Shorten</button>
+                    </form>
+                </div>
+                <div class="text-center" id="resultView" style="display: none;">
+                      <div class="form-group">
+                        <label for="short-url">You can now use:</label>
+                        <input type="text" id="short-url" class="form-control" value="" readonly/>
+                      </div>
+                    <button type="button" class="btn btn-primary copy-btn" data-clipboard-target="#short-url"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/clipboard@2.0.0/dist/clipboard.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                new ClipboardJS('.copy-btn');
+
+                $("#url-shortner-form").submit(function(event){
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    let $form = $(this),
+                        uri = $form.find( "input[name='uri']" ).val(),
+                        formUrl = $form.attr("action");
+
+                    $.ajax({
+                        type: "POST",
+                        url: formUrl,
+                        data: JSON.stringify({ uri: uri }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function(data){
+                            $('#formView').hide();
+                            console.log(data);
+                            $('#short-url').val(data.url);
+                            $('#resultView').show();
+                        },
+                        failure: function(errMsg) {
+                            console.log(errMsg);
+                        }
+                    });
+                });
+            });
+        </script>
+
+    </body>
+</html>
