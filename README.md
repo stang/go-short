@@ -31,8 +31,11 @@
     # (optional) needs to be done only once, if you want a custom domain name
     heroku domains:add go.stang.sh
 
-    # deploy
+    # deploy (for next times)
     git push heroku master
+
+    # (debug) connect to the redis server
+    heroku redis:cli
 
 ## Technical implementation
 
